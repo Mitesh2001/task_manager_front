@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import LayoutProvider from "./provider/LayoutProvider"
 import AuthPage from "./pages/AuthPage"
+import Dashboard from "./pages/Dashboard"
 
 const App = () => {
 
@@ -13,7 +14,8 @@ const App = () => {
           {
             isLogin ? (
               <>
-
+                <Route path='dashboard' element={<Dashboard />} />
+                <Route path='*' element={<Navigate to='/dashboard' />} />
               </>
             ) : (
               <>

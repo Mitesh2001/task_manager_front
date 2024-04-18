@@ -2,10 +2,11 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import LayoutProvider from "./provider/LayoutProvider"
 import AuthPage from "./pages/AuthPage"
 import Dashboard from "./pages/Dashboard"
+import Task from "./pages/task/Task"
 
 const App = () => {
 
-  const isLogin = false
+  const isLogin = true
 
   return (
     <BrowserRouter >
@@ -15,6 +16,7 @@ const App = () => {
             isLogin ? (
               <>
                 <Route path='dashboard' element={<Dashboard />} />
+                <Route path='task' element={<Task />} />
                 <Route path='*' element={<Navigate to='/dashboard' />} />
               </>
             ) : (

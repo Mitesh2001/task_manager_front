@@ -1,7 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+interface Task {
+    id: string,
+    title: string,
+    description: string,
+    status: string,
+    dueDate: Date,
+    assignedTo: string
+}
+
 type InitialState = {
-    data: string[] | [],
+    data: Task[] | [],
     isLoading: boolean,
     error: string | null
 }

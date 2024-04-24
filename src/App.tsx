@@ -6,14 +6,14 @@ import Task from "./pages/task/Task"
 
 const App = () => {
 
-  const isLogin = true
+  const authUser = true
 
   return (
     <BrowserRouter >
       <Routes>
         <Route element={<LayoutProvider />}>
           {
-            isLogin ? (
+            authUser ? (
               <>
                 <Route path='dashboard' element={<Dashboard />} />
                 <Route path='task' element={<Task />} />

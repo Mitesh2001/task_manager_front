@@ -1,11 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-interface Task {
+export interface Task {
     id: string,
     title: string,
     description: string,
     status: string,
-    dueDate: Date,
+    dueDate: string,
     assignedTo: string
 }
 
@@ -21,6 +22,18 @@ const initialState: InitialState = {
     error: null
 }
 
+export const taskApi = createApi({
+    reducerPath: "taskApi",
+    baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_BASE_URL }),
+    endpoints: (builder) => (
+        {
+            getAllTasks: builder.query({
+                query: () => `task`
+            })
+        }
+    )
+});
+
 const taskSlice = createSlice({
     name: "task",
     initialState,
@@ -28,5 +41,7 @@ const taskSlice = createSlice({
 });
 
 export const { } = taskSlice.actions;
+
+export const { useGetAllTasksQuery } = taskApi;
 
 export default taskSlice.reducer;

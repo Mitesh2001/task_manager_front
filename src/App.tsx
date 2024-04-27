@@ -3,6 +3,7 @@ import LayoutProvider from "./provider/LayoutProvider"
 import AuthPage from "./pages/AuthPage"
 import Dashboard from "./pages/Dashboard"
 import Task from "./pages/task/Task"
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
 

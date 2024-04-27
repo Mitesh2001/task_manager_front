@@ -6,6 +6,7 @@ import { setupAxios } from './routes/Request/Api';
 import axios from 'axios';
 import { store } from './redux/task/store';
 import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
 
 const container = document.getElementById('root') as HTMLElement;
 
@@ -15,6 +16,7 @@ if (container) {
     <React.StrictMode>
       <Provider store={store}>
         <App />
+        <ToastContainer />
       </Provider>
     </React.StrictMode>
   )

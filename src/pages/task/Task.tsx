@@ -1,18 +1,27 @@
 import classNames from 'classnames'
-import { useState } from 'react'
-import { TrashIcon, PencilIcon, PlusIcon, ChevronDownIcon, CheckIcon } from '@heroicons/react/20/solid'
+import { Fragment, useState } from 'react'
+import { TrashIcon, EllipsisVerticalIcon, PencilIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { Button, Dropdown, Empty } from 'rizzui'
 import TaskForm from './TaskForm'
-import { Task as TaskInterface, TaskStatus, useGetAllTasksQuery } from '../../redux/task/TaskSlice'
-import { taskDelete, taskUpdate } from '../../requests/_request'
+import { Task as TaskInterface, useGetAllTasksQuery } from '../../redux/task/TaskSlice'
+import { taskDelete } from '../../requests/_request'
 import { toastAlert } from '../../util/ToastAlert'
 
-type statuses = { [K in TaskStatus]: string }
+export enum TaskStatus {
+    TO_DO = 'To do',
+    IN_PROGRSS = 'In Progress',
+    COMPLETED = 'Completed',
+}
 
-const statuses: statuses = {
+const statuses: any = {
     [TaskStatus.TO_DO]: 'text-green-700 bg-green-50 ring-green-600/20',
-    [TaskStatus.IN_PROGRSS]: 'text-gray-600 bg-gray-50 ring-gray-500/10',
+    [TaskStatus.IN_PROGRSS]: 'text- gray - 600 bg-gray - 50 ring - gray - 500 / 10',
     [TaskStatus.COMPLETED]: 'text-yellow-800 bg-yellow-50 ring-yellow-600/20',
+}
+
+const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
 }
 
 const Task = () => {
@@ -21,13 +30,7 @@ const Task = () => {
     const [modalState, setModalState] = useState<boolean>(false);
     const [editTask, setEditTask] = useState<TaskInterface | null>(null);
 
-
     const tasks: TaskInterface[] | null = data?.data;
-
-    const orderedTask = tasks && [...tasks].sort((a: TaskInterface, b: TaskInterface) => {
-        const order = { [TaskStatus.TO_DO]: 1, [TaskStatus.IN_PROGRSS]: 2, [TaskStatus.COMPLETED]: 3 };
-        return order[a.status] - order[b.status];
-    });
 
     const deleteHandle = async (taskId: string) => {
         if (!window.confirm("Are you sure you want to delete this task?")) {
@@ -52,24 +55,9 @@ const Task = () => {
         setModalState(true);
     }
 
-    const updateStatus = async (taskId: string, status: TaskStatus) => {
-        try {
-            await taskUpdate({ status }, taskId).then((res: any) => {
-                if (res.status === 200) {
-                    setModalState(false);
-                    refetch();
-                } else {
-                    toastAlert("error", res.data.error)
-                }
-            });
-        } catch (error: any) {
-            toastAlert("error", error.message)
-        }
-    }
-
     return (
         <>
-            <div className="mx-auto w-3/4 max-w-full">
+            <div className="mx-auto w-full max-w-lg">
                 <div className='flex justify-end m-2'>
                     <Button rounded="lg" onClick={() => setModalState(!modalState)}>
                         <span>New Task</span>{" "}
@@ -80,7 +68,7 @@ const Task = () => {
                     tasks?.length === 0 && <Empty text="No Tasks" textClassName="mt-2" />
                 }
                 <ul role="list" className="divide-y divide-gray-100">
-                    {orderedTask?.map((task: TaskInterface) => (
+                    {tasks?.map((task: TaskInterface) => (
                         <li key={task._id} className="flex items-center justify-between gap-x-6 py-5">
                             <div className="min-w-0">
                                 <div className="flex items-start gap-x-3">
@@ -100,33 +88,24 @@ const Task = () => {
                                     </svg>
                                 </div>
                             </div>
-                            <div className="flex flex-none items-center gap-x-7">
-                                <div className='flex'>
-                                    <PencilIcon className="mr-2 h-4 w-4 cursor-pointer" onClick={() => editHandle(task)} />
-                                    <TrashIcon className="mr-2 h-4 w-4 cursor-pointer" onClick={() => deleteHandle(task._id)} />
-                                </div>
+                            <div className="flex flex-none items-center gap-x-4">
                                 <Dropdown placement='right'>
                                     <Dropdown.Trigger>
-                                        <Button variant="outline">
-                                            Move to <ChevronDownIcon className="ml-2 w-5" />
+                                        <Button variant="text" >
+                                            <EllipsisVerticalIcon className="h-5 w-5" aria-hidden="true" />
                                         </Button>
                                     </Dropdown.Trigger>
-                                    <Dropdown.Menu>
-                                        {
-                                            Object.values(TaskStatus).map((status: TaskStatus) => {
-                                                return (
-                                                    <Dropdown.Item
-                                                        className={classNames(statuses[status], "mt-1")}
-                                                        key={status}
-                                                        onClick={() => {
-                                                            status !== task.status && updateStatus(task._id, status)
-                                                        }}
-                                                    >
-                                                        {status} {status === task.status && <CheckIcon className="mx-5 h-4 w-4" />}
-                                                    </Dropdown.Item>
-                                                )
-                                            })
-                                        }
+                                    <Dropdown.Menu className="divide-y">
+                                        <div className="mb-2" >
+                                            <Dropdown.Item onClick={() => editHandle(task)}>
+                                                <PencilIcon className="mr-2 h-4 w-4" />
+                                                Edit
+                                            </Dropdown.Item>
+                                            <Dropdown.Item onClick={() => deleteHandle(task._id)}>
+                                                <TrashIcon className="mr-2 h-4 w-4" />
+                                                Delete
+                                            </Dropdown.Item>
+                                        </div>
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </div>

@@ -1,17 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export enum TaskStatus {
-  TO_DO = "To do",
-  IN_PROGRSS = "In Progress",
-  COMPLETED = "Completed",
-}
-
 export interface Task {
   _id: string;
   title: string;
   description: string;
-  status: TaskStatus;
+  status: string;
   dueDate: string;
   assignedTo: string;
 }

@@ -1,10 +1,11 @@
-import { FC } from "react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
 import {
     Modal,
     Button,
     Text,
     ActionIcon,
-    Input
+    Input,
+    FileInput
 } from "rizzui";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { useFormik } from "formik";
@@ -26,14 +27,18 @@ const validationSchema = Yup.object({
     title: Yup.string().
         required('Title is Required'),
     dueDate: Yup.date().min(new Date(Date.now() - 86400000), "Date cannot be in the past")
-        .required('Set some due date for the task')
+        .required('Set some due date for the task'),
+    image: Yup.mixed()
 })
 
 const TaskForm: FC<TaskForm> = ({ editTask, modalState, setModalState, refetch, setEditTask }) => {
 
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
     const initialValues = {
         title: editTask ? editTask.title : "New Task",
-        dueDate: editTask ? formateDate(editTask.dueDate) : formateDate(new Date().toDateString())
+        dueDate: editTask ? formateDate(editTask.dueDate) : formateDate(new Date().toDateString()),
+        image: ""
     }
 
     const formik = useFormik({
@@ -43,41 +48,56 @@ const TaskForm: FC<TaskForm> = ({ editTask, modalState, setModalState, refetch, 
         onSubmit: async (values, { resetForm, setSubmitting }) => {
             try {
                 setSubmitting(true);
-                if (editTask) {
-                    await taskUpdate(values, editTask._id).then((res: any) => {
-                        if (res.status === 200) {
-                            setModalState(false);
-                            toastAlert("success", "Task Updated !");
-                            refetch();
-                            setEditTask(null);
-                        } else {
-                            toastAlert("error", res.data.error)
-                        }
-                    });
-                    return;
-                }
-                await taskCreate(values).then((res: any) => {
-                    if (res.status === 201) {
-                        setModalState(false);
-                        toastAlert("success", "Task Created !");
-                        resetForm();
-                        refetch();
-                    } else {
-                        toastAlert("error", res.data.error)
-                    }
-                });
-                setSubmitting(false);
+                const formData = new FormData();
+                formData.append('title', values.title);
+                formData.append('dueDate', values.dueDate);
+                formData.append('image', selectedImage ?? "");
+                console.log(formData);
+                return true;
+                return;
+                // if (editTask) {
+                //     await taskUpdate(formData, editTask._id).then((res: any) => {
+                //         if (res.status === 200) {
+                //             setModalState(false);
+                //             toastAlert("success", "Task Updated !");
+                //             refetch();
+                //             setEditTask(null);
+                //         } else {
+                //             toastAlert("error", res.data.error)
+                //         }
+                //     });
+                //     return;
+                // }
+                // await taskCreate(formData).then((res: any) => {
+                //     if (res.status === 201) {
+                //         setModalState(false);
+                //         toastAlert("success", "Task Created !");
+                //         resetForm();
+                //         refetch();
+                //     } else {
+                //         toastAlert("error", res.data.error)
+                //     }
+                // });
+                // setSubmitting(false);
             } catch (error: any) {
                 toastAlert("error", error.message)
             }
         }
     });
 
+    const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.currentTarget.files && event.currentTarget.files.length > 0) {
+            setSelectedImage(event.currentTarget.files[0]);
+        }
+    };
+
+    useEffect(() => { console.log(selectedImage) }, [selectedImage])
+
     return (
         <>
             <Modal isOpen={modalState} onClose={() => { }}>
                 <div className="m-auto px-7 pt-6 pb-8">
-                    <form className="space-y-6" onSubmit={formik.handleSubmit} >
+                    <form className="space-y-6" onSubmit={formik.handleSubmit} encType="multipart/form-data" >
                         <div className="mb-7 flex items-center justify-between">
                             <Text>New Task</Text>
                             <ActionIcon
@@ -106,6 +126,15 @@ const TaskForm: FC<TaskForm> = ({ editTask, modalState, setModalState, refetch, 
                                 className="col-span-2"
                                 {...formik.getFieldProps("dueDate")}
                                 error={formik.touched.dueDate && formik.errors.dueDate ? formik.errors.dueDate : ""}
+                            />
+                            <FileInput
+                                label="Media"
+                                inputClassName="border-2"
+                                size="lg"
+                                className="col-span-2"
+                                {...formik.getFieldProps("image")}
+                                onChange={handleImageChange}
+                                error={formik.touched.image && formik.errors.image ? formik.errors.image : ""}
                             />
                             <Button
                                 type="submit"

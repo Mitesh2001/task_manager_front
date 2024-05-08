@@ -14,6 +14,7 @@ export interface Task {
   status: TaskStatus;
   dueDate: string;
   assignedTo: string;
+  media?: string;
 }
 
 type InitialState = {

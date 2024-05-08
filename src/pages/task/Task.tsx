@@ -129,6 +129,7 @@ const Task = () => {
                                         }
                                     </Dropdown.Menu>
                                 </Dropdown>
+                                <img className='h-20 rounded' src={`${process.env.REACT_APP_API_BASE_URL}${task.media}`} />
                             </div>
                         </li>
                     ))}

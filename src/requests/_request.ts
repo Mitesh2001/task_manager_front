@@ -10,9 +10,17 @@ export const registration = async (userDetails: any) => {
 };
 
 export const taskCreate = async (task: any) => {
-  return await axios.post(`${process.env.REACT_APP_API_BASE_URL}task`, {
-    ...task,
-  });
+  return await axios.post(
+    `${process.env.REACT_APP_API_BASE_URL}task`,
+    {
+      ...task,
+    },
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
 };
 
 export const taskUpdate = async (task: any, taskId: string) => {

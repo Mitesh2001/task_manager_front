@@ -33,8 +33,6 @@ const validationSchema = Yup.object({
 
 const TaskForm: FC<TaskForm> = ({ editTask, modalState, setModalState, refetch, setEditTask }) => {
 
-    const [selectedImage, setSelectedImage] = useState<File | null>(null);
-
     const initialValues = {
         title: editTask ? editTask.title : "New Task",
         dueDate: editTask ? formateDate(editTask.dueDate) : formateDate(new Date().toDateString()),
@@ -48,50 +46,35 @@ const TaskForm: FC<TaskForm> = ({ editTask, modalState, setModalState, refetch, 
         onSubmit: async (values, { resetForm, setSubmitting }) => {
             try {
                 setSubmitting(true);
-                const formData = new FormData();
-                formData.append('title', values.title);
-                formData.append('dueDate', values.dueDate);
-                formData.append('image', selectedImage ?? "");
-                console.log(formData);
-                return true;
-                return;
-                // if (editTask) {
-                //     await taskUpdate(formData, editTask._id).then((res: any) => {
-                //         if (res.status === 200) {
-                //             setModalState(false);
-                //             toastAlert("success", "Task Updated !");
-                //             refetch();
-                //             setEditTask(null);
-                //         } else {
-                //             toastAlert("error", res.data.error)
-                //         }
-                //     });
-                //     return;
-                // }
-                // await taskCreate(formData).then((res: any) => {
-                //     if (res.status === 201) {
-                //         setModalState(false);
-                //         toastAlert("success", "Task Created !");
-                //         resetForm();
-                //         refetch();
-                //     } else {
-                //         toastAlert("error", res.data.error)
-                //     }
-                // });
-                // setSubmitting(false);
+                if (editTask) {
+                    await taskUpdate(values, editTask._id).then((res: any) => {
+                        if (res.status === 200) {
+                            setModalState(false);
+                            toastAlert("success", "Task Updated !");
+                            refetch();
+                            setEditTask(null);
+                        } else {
+                            toastAlert("error", res.data.error)
+                        }
+                    });
+                    return;
+                }
+                await taskCreate(values).then((res: any) => {
+                    if (res.status === 201) {
+                        setModalState(false);
+                        toastAlert("success", "Task Created !");
+                        resetForm();
+                        refetch();
+                    } else {
+                        toastAlert("error", res.data.error)
+                    }
+                });
+                setSubmitting(false);
             } catch (error: any) {
                 toastAlert("error", error.message)
             }
         }
     });
-
-    const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-        if (event.currentTarget.files && event.currentTarget.files.length > 0) {
-            setSelectedImage(event.currentTarget.files[0]);
-        }
-    };
-
-    useEffect(() => { console.log(selectedImage) }, [selectedImage])
 
     return (
         <>
@@ -132,8 +115,13 @@ const TaskForm: FC<TaskForm> = ({ editTask, modalState, setModalState, refetch, 
                                 inputClassName="border-2"
                                 size="lg"
                                 className="col-span-2"
-                                {...formik.getFieldProps("image")}
-                                onChange={handleImageChange}
+                                accept="image/png, .svg, .jpg, .jpeg"
+                                // {...formik.getFieldProps("image")}
+                                onChange={(event) => {
+                                    if (event.currentTarget.files) {
+                                        formik.setFieldValue("image", event.currentTarget.files[0])
+                                    }
+                                }}
                                 error={formik.touched.image && formik.errors.image ? formik.errors.image : ""}
                             />
                             <Button

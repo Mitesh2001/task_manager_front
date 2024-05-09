@@ -84,20 +84,21 @@ const Task = () => {
                         <li key={task._id} className="flex items-center justify-between gap-x-6 py-5">
                             <div className="min-w-0">
                                 <div className="flex items-start gap-x-3">
-                                    <p className="text-sm font-semibold leading-6 text-gray-900">{task.title}</p>
-                                    <p
-                                        className={classNames(statuses[task.status], 'rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset')}
-                                    >
-                                        {task.status}
-                                    </p>
-                                </div>
-                                <div className="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-                                    <p className="whitespace-nowrap">
-                                        Due on {new Date(task.dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                    </p>
-                                    <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
-                                        <circle cx={1} cy={1} r={1} />
-                                    </svg>
+                                    <img className='h-20 w-32 rounded' src={`${process.env.REACT_APP_API_BASE_URL}${task.media}`} />
+                                    <div>
+                                        <p className="font-semibold leading-6 text-gray-900">{task.title}
+                                            <span
+                                                className={classNames(statuses[task.status], 'rounded-md whitespace-nowrap m-2 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset')}
+                                            >
+                                                {task.status}
+                                            </span>
+                                        </p>
+                                        <div className="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
+                                            <p className="whitespace-nowrap">
+                                                Due on {new Date(task.dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex flex-none items-center gap-x-7">
@@ -129,7 +130,6 @@ const Task = () => {
                                         }
                                     </Dropdown.Menu>
                                 </Dropdown>
-                                <img className='h-20 rounded' src={`${process.env.REACT_APP_API_BASE_URL}${task.media}`} />
                             </div>
                         </li>
                     ))}

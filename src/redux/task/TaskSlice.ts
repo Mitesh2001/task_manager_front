@@ -14,7 +14,7 @@ export interface Task {
   status: TaskStatus;
   dueDate: string;
   assignedTo: string;
-  media?: string;
+  imagePath: string;
 }
 
 type InitialState = {

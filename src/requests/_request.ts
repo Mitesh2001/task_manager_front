@@ -28,6 +28,11 @@ export const taskUpdate = async (task: any, taskId: string) => {
     `${process.env.REACT_APP_API_BASE_URL}task/${taskId}`,
     {
       ...task,
+    },
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     }
   );
 };

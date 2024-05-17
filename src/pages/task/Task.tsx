@@ -84,7 +84,7 @@ const Task = () => {
                         <li key={task._id} className="flex items-center justify-between gap-x-6 py-5">
                             <div className="min-w-0">
                                 <div className="flex items-start gap-x-3">
-                                    <img className='h-20 w-32 rounded' src={`${process.env.REACT_APP_API_BASE_URL}${task.media}`} />
+                                    <img className='h-20 w-32 rounded' src={`${process.env.REACT_APP_API_BASE_URL}${task.imagePath}`} />
                                     <div>
                                         <p className="font-semibold leading-6 text-gray-900">{task.title}
                                             <span

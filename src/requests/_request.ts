@@ -1,12 +1,17 @@
 import axios from "axios";
 import { Api } from "../routes/Request/Api";
+import { AuthModel, User } from "../auth/_models";
 
 export const login = async (userDetails: any) => {
-  return Api.post(`/auth/login`, userDetails);
+  return Api.post<AuthModel>(`/auth/login`, userDetails);
 };
 
 export const registration = async (userDetails: any) => {
   return Api.post(`/user`, userDetails);
+};
+
+export const getUserByToken = async (api_token: string) => {
+  return Api.post<User>("/user/verify_token", { access_token: api_token });
 };
 
 export const taskCreate = async (task: any) => {
@@ -28,6 +33,11 @@ export const taskUpdate = async (task: any, taskId: string) => {
     `${process.env.REACT_APP_API_BASE_URL}task/${taskId}`,
     {
       ...task,
+    },
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     }
   );
 };

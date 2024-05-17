@@ -28,7 +28,7 @@ const validationSchema = Yup.object({
         required('Title is Required'),
     dueDate: Yup.date().min(new Date(Date.now() - 86400000), "Date cannot be in the past")
         .required('Set some due date for the task'),
-    image: Yup.mixed()
+    file: Yup.mixed()
 })
 
 const TaskForm: FC<TaskForm> = ({ editTask, modalState, setModalState, refetch, setEditTask }) => {
@@ -36,7 +36,7 @@ const TaskForm: FC<TaskForm> = ({ editTask, modalState, setModalState, refetch, 
     const initialValues = {
         title: editTask ? editTask.title : "New Task",
         dueDate: editTask ? formateDate(editTask.dueDate) : formateDate(new Date().toDateString()),
-        image: ""
+        file: ""
     }
 
     const formik = useFormik({
@@ -116,13 +116,12 @@ const TaskForm: FC<TaskForm> = ({ editTask, modalState, setModalState, refetch, 
                                 size="lg"
                                 className="col-span-2"
                                 accept="image/png, .svg, .jpg, .jpeg"
-                                // {...formik.getFieldProps("image")}
                                 onChange={(event) => {
                                     if (event.currentTarget.files) {
-                                        formik.setFieldValue("image", event.currentTarget.files[0])
+                                        formik.setFieldValue("file", event.currentTarget.files[0])
                                     }
                                 }}
-                                error={formik.touched.image && formik.errors.image ? formik.errors.image : ""}
+                                error={formik.touched.file && formik.errors.file ? formik.errors.file : ""}
                             />
                             <Button
                                 type="submit"

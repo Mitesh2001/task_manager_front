@@ -1,5 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { AUTH_LOCAL_STORAGE_KEY, getAuth } from "../../auth/AuthHelper";
 
 export enum TaskStatus {
   TO_DO = "To do",
@@ -29,12 +30,14 @@ const initialState: InitialState = {
   error: null,
 };
 
+const authToken = getAuth();
+
 export const taskApi = createApi({
   reducerPath: "taskApi",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_BASE_URL,
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      Authorization: `Bearer ${authToken}`,
     },
   }),
   endpoints: (builder) => ({

@@ -30,6 +30,7 @@ const Login = () => {
         onSubmit: async (values) => {
             try {
                 const { data: auth } = await login(values);
+                saveAuth(auth.access_token)
                 const { data: user } = await getUserByToken(auth.access_token);
                 setIsUserAuthenticated(true)
             } catch (error: any) {

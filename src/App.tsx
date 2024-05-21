@@ -4,10 +4,10 @@ import AuthPage from "./pages/AuthPage"
 import Dashboard from "./pages/Dashboard"
 import Task from "./pages/task/Task"
 import { useAuth } from "./auth/AuthInit"
+import AuthLayout from "./provider/AuthLayout"
 
 const App = () => {
 
-  const authUser = true;
   const { isUserAuthenticated, ...rest } = useAuth();
   console.log({ isUserAuthenticated, ...rest });
 
@@ -18,9 +18,11 @@ const App = () => {
           {
             isUserAuthenticated ? (
               <>
-                <Route path='dashboard' element={<Dashboard />} />
-                <Route path='task' element={<Task />} />
-                <Route path='*' element={<Navigate to='/dashboard' />} />
+                <Route element={<AuthLayout />}>
+                  <Route path='dashboard' element={<Dashboard />} />
+                  <Route path='task' element={<Task />} />
+                  <Route path='*' element={<Navigate to='/dashboard' />} />
+                </Route>
               </>
             ) : (
               <>

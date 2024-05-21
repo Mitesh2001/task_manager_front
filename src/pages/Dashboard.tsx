@@ -1,7 +1,7 @@
 
 const Dashboard = () => {
     return (
-        <div>Dashboard</div>
+        <div className="mx-auto w-3/4 max-w-full">Dashboard</div>
     )
 }
 

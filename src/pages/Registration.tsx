@@ -3,6 +3,7 @@ import { Link, NavigateFunction, useNavigate } from "react-router-dom"
 import * as Yup from 'yup';
 import { toastAlert } from "../util/ToastAlert";
 import { registration } from "../requests/_request";
+import { AxiosError } from "axios";
 
 const initialValues = {
     email: "",
@@ -26,17 +27,13 @@ const Registration = () => {
         initialValues,
         validationSchema,
         onSubmit: async (values) => {
-            try {
-                const registrationRequest = await registration(values)
-                if (registrationRequest.status === 201) {
-                    toastAlert("success", "Registration Successful ! Please login to your account...");
-                    navigate("/login");
-                } else {
-                    toastAlert("error", registrationRequest.data.error);
-                }
-            } catch (error: any) {
-                toastAlert(error.message)
-            }
+            await registration(values).then(() => {
+                console.log("res")
+                toastAlert("success", "Registration Successful ! Please login to your account...");
+                navigate("/login");
+            }).catch((error: AxiosError) => {
+                toastAlert("error", error.message);
+            })
         }
     });
 

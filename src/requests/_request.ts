@@ -7,7 +7,7 @@ export const login = async (userDetails: any) => {
 };
 
 export const registration = async (userDetails: any) => {
-  return Api.post(`/user`, userDetails);
+  return Api.post(`/auth/signup`, userDetails);
 };
 
 export const getUserByToken = async (api_token: string) => {

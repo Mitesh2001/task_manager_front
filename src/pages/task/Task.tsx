@@ -69,7 +69,7 @@ const Task = () => {
 
     return (
         <>
-            <div className="mx-auto w-3/4 max-w-full">
+            <div className="mx-auto w-3/4 max-w-full overflow-auto">
                 <div className='flex justify-end m-2'>
                     <Button rounded="lg" onClick={() => setModalState(!modalState)}>
                         <span>New Task</span>{" "}

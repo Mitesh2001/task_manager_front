@@ -7,11 +7,11 @@ export const login = async (userDetails: any) => {
 };
 
 export const registration = async (userDetails: any) => {
-  return Api.post(`/auth/signup`, userDetails);
+  return Api.post<AuthModel>(`/auth/signup`, userDetails);
 };
 
 export const getUserByToken = async (api_token: string) => {
-  return Api.post<User>("/user/verify_token", { access_token: api_token });
+  return Api.post<User>("/auth/verify_token", { access_token: api_token });
 };
 
 export const taskCreate = async (task: any) => {

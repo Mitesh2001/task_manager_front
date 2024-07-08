@@ -1,7 +1,8 @@
+import { AxiosError, AxiosResponse } from "axios";
 import { AuthModel } from "./_models";
 
 const AUTH_LOCAL_STORAGE_KEY = "access_token";
-const AUTH_LOCAL_REFRESH_KEY = "refresh_token";
+export const AUTH_LOCAL_REFRESH_KEY = "refresh_token";
 
 const getAuth = (): AuthModel | undefined => {
   if (!localStorage) {
@@ -16,7 +17,7 @@ const getAuth = (): AuthModel | undefined => {
 
   try {
     const access_token: string = JSON.parse(accessTokenValue) as string;
-    const refresh_token: string = JSON.parse(accessTokenValue) as string;
+    const refresh_token: string = JSON.parse(refreshTokenValue) as string;
     if (access_token && refresh_token) {
       return { accessToken: access_token, refreshToken: refresh_token };
     }
@@ -61,7 +62,10 @@ const setupAxios = (axios: any) => {
 
       return config;
     },
-    (err: any) => Promise.reject(err)
+    (error: AxiosError) => {
+      const originalRequest = error.config;
+      console.log(originalRequest)
+    }
   );
 };
 

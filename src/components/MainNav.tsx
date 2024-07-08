@@ -1,12 +1,19 @@
 import { Link, useLocation, matchPath } from "react-router-dom";
 import { Dropdown, Text, Avatar } from "rizzui";
 import { useAuth } from "../auth/AuthInit";
+import { Logout } from "../requests/_request";
 
 export const MainNav = () => {
 
     const router = useLocation();
 
     const { logout } = useAuth();
+
+    const AuthLogout = async () => {
+        await Logout().then(() => {
+            logout();
+        })
+    }
 
     const NavItems = [
         {
@@ -71,7 +78,7 @@ export const MainNav = () => {
                                         </Dropdown.Item>
                                     </div>
                                     <div className="mt-2 pt-2">
-                                        <Dropdown.Item className="hover:bg-gray-900 hover:text-gray-50" onClick={logout}>
+                                        <Dropdown.Item className="hover:bg-gray-900 hover:text-gray-50" onClick={AuthLogout}>
                                             Sign Out
                                         </Dropdown.Item>
                                     </div>

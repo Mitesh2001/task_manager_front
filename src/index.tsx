@@ -8,11 +8,10 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 import { AuthProvider } from './auth/AuthInit';
-import { setupAxios } from './auth/AuthHelper';
 
 const container = document.getElementById('root') as HTMLElement;
 
-setupAxios(axios)
+// setupAxios(axios)
 if (container) {
   createRoot(container).render(
     <React.StrictMode>

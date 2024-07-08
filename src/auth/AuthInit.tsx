@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, SetStateAction, createContext, useContext, useEffect, Dispatch, useState } from "react";
-import { AuthModel, User } from "./_models";
+import { AuthModel } from "./_models";
 import * as authHelper from "./AuthHelper"
 import { getUserByToken } from "../requests/_request";
 import LoadingPage from "../pages/LoadingPage";
@@ -40,7 +40,7 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         }
     }
 
-    const logout = () => {
+    const logout = async () => {
         saveAuth(undefined)
         setIsUserAuthenticated(false)
     }
@@ -79,7 +79,7 @@ const AuthInit: FC<PropsWithChildren> = ({ children }) => {
             setShowSplashScreen(false)
         }
 
-    }, []);
+    }, [auth]);
 
     return showSplashScreen ? <LoadingPage /> : <>{children}</>;
 }

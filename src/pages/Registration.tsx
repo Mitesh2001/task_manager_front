@@ -2,8 +2,9 @@ import { useFormik } from "formik";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom"
 import * as Yup from 'yup';
 import { toastAlert } from "../util/ToastAlert";
-import { registration } from "../requests/_request";
+import { getUserByToken, registration } from "../requests/_request";
 import { AxiosError } from "axios";
+import { useAuth } from "../auth/AuthInit";
 
 const initialValues = {
     email: "",
@@ -21,16 +22,20 @@ const validationSchema = Yup.object({
 
 const Registration = () => {
 
-    const navigate: NavigateFunction = useNavigate();
+    const { setIsUserAuthenticated, saveAuth } = useAuth()
 
     const formik = useFormik({
         initialValues,
         validationSchema,
         onSubmit: async (values) => {
-            await registration(values).then(() => {
-                console.log("res")
+            await registration(values).then(async (res) => {
                 toastAlert("success", "Registration Successful ! Please login to your account...");
-                navigate("/login");
+                const { data: auth } = res
+                saveAuth(auth)
+                const { data: user } = await getUserByToken(auth.accessToken);
+                if (user) {
+                    setIsUserAuthenticated(true)
+                }
             }).catch((error: AxiosError) => {
                 toastAlert("error", error.message);
             })

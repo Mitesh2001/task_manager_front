@@ -37,7 +37,7 @@ export const taskApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_BASE_URL,
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      Authorization: `Bearer ${authToken?.accessToken}`,
     },
   }),
   endpoints: (builder) => ({
@@ -53,7 +53,7 @@ const taskSlice = createSlice({
   reducers: {},
 });
 
-export const {} = taskSlice.actions;
+export const { } = taskSlice.actions;
 
 export const { useGetAllTasksQuery } = taskApi;
 

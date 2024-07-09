@@ -1,13 +1,13 @@
 import { FC, PropsWithChildren, SetStateAction, createContext, useContext, useEffect, Dispatch, useState } from "react";
-import { AuthModel, User } from "./_models";
+import { AuthModel } from "./_models";
 import * as authHelper from "./AuthHelper"
 import { getUserByToken } from "../requests/_request";
 import LoadingPage from "../pages/LoadingPage";
 
 type AuthContexProps = {
-    auth: string | undefined
+    auth: AuthModel | undefined
     isUserAuthenticated: boolean
-    saveAuth: (auth: string | undefined) => void
+    saveAuth: (auth: AuthModel | undefined) => void
     setIsUserAuthenticated: Dispatch<SetStateAction<boolean>>
     logout: () => void
 }
@@ -28,19 +28,19 @@ const useAuth = () => {
 
 const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
-    const [auth, setAuth] = useState<string | undefined>(authHelper.getAuth());
+    const [auth, setAuth] = useState<AuthModel | undefined>(authHelper.getAuth());
     const [isUserAuthenticated, setIsUserAuthenticated] = useState<boolean>(false);
 
-    const saveAuth = (auth: string | undefined) => {
+    const saveAuth = (auth: AuthModel | undefined) => {
         setAuth(auth)
         if (auth) {
-            authHelper.setAuth(auth)
+            authHelper.setAuth(auth.accessToken, auth.refreshToken)
         } else {
             authHelper.removeAuth();
         }
     }
 
-    const logout = () => {
+    const logout = async () => {
         saveAuth(undefined)
         setIsUserAuthenticated(false)
     }
@@ -53,9 +53,12 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 }
 
 const AuthInit: FC<PropsWithChildren> = ({ children }) => {
+
     const { auth, logout, setIsUserAuthenticated } = useAuth();
     const [showSplashScreen, setShowSplashScreen] = useState(true)
+
     useEffect(() => {
+
         const requestUser = async (apiToken: string) => {
             try {
                 const { data } = await getUserByToken(apiToken);
@@ -68,13 +71,16 @@ const AuthInit: FC<PropsWithChildren> = ({ children }) => {
                 setShowSplashScreen(false)
             }
         }
+
         if (auth) {
-            requestUser(auth)
+            requestUser(auth.accessToken)
         } else {
             logout()
             setShowSplashScreen(false)
         }
-    }, []);
+
+    }, [auth]);
+
     return showSplashScreen ? <LoadingPage /> : <>{children}</>;
 }
 

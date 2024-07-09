@@ -6,6 +6,7 @@ import TaskForm from './TaskForm'
 import { Task as TaskInterface, TaskStatus, useGetAllTasksQuery } from '../../redux/task/TaskSlice'
 import { taskDelete, taskUpdate } from '../../requests/_request'
 import { toastAlert } from '../../util/ToastAlert'
+import { AxiosError, AxiosResponse } from 'axios'
 
 type statuses = { [K in TaskStatus]: string }
 
@@ -21,7 +22,6 @@ const Task = () => {
     const [modalState, setModalState] = useState<boolean>(false);
     const [editTask, setEditTask] = useState<TaskInterface | null>(null);
 
-
     const tasks: TaskInterface[] | null = data?.data;
 
     const orderedTask = tasks && [...tasks].sort((a: TaskInterface, b: TaskInterface) => {
@@ -33,18 +33,12 @@ const Task = () => {
         if (!window.confirm("Are you sure you want to delete this task?")) {
             return;
         }
-        try {
-            await taskDelete(taskId).then((res: any) => {
-                if (res.status === 200) {
-                    setModalState(false);
-                    refetch();
-                } else {
-                    toastAlert("error", res.data.error)
-                }
-            });
-        } catch (error: any) {
-            toastAlert("error", error.message)
-        }
+        await taskDelete(taskId).then((res: any) => {
+            setModalState(false);
+            refetch();
+        }).catch((err: AxiosError) => {
+            toastAlert("error", err.message)
+        });
     }
 
     const editHandle = (task: TaskInterface) => {
@@ -53,18 +47,12 @@ const Task = () => {
     }
 
     const updateStatus = async (taskId: string, status: TaskStatus) => {
-        try {
-            await taskUpdate({ status }, taskId).then((res: any) => {
-                if (res.status === 200) {
-                    setModalState(false);
-                    refetch();
-                } else {
-                    toastAlert("error", res.data.error)
-                }
-            });
-        } catch (error: any) {
-            toastAlert("error", error.message)
-        }
+        await taskUpdate({ status }, taskId).then((res: AxiosResponse) => {
+            setModalState(false);
+            refetch();
+        }).catch((err: AxiosError) => {
+            toastAlert("error", err.message)
+        });
     }
 
     return (

@@ -1,5 +1,5 @@
 import { useFormik } from "formik"
-import { Link, NavigateFunction, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import * as Yup from 'yup';
 import { getUserByToken, login } from "../requests/_request";
 import { toastAlert } from "../util/ToastAlert";
@@ -21,7 +21,6 @@ const validationSchema = Yup.object({
 
 const Login = () => {
 
-    const navigate: NavigateFunction = useNavigate();
     const { setIsUserAuthenticated, saveAuth } = useAuth()
 
     const formik = useFormik({
@@ -30,9 +29,11 @@ const Login = () => {
         onSubmit: async (values) => {
             try {
                 const { data: auth } = await login(values);
-                saveAuth(auth.access_token)
-                const { data: user } = await getUserByToken(auth.access_token);
-                setIsUserAuthenticated(true)
+                saveAuth(auth)
+                const { data: user } = await getUserByToken(auth.accessToken);
+                if (user) {
+                    setIsUserAuthenticated(true)
+                }
             } catch (error: any) {
                 toastAlert("error", error.message)
                 saveAuth(undefined)

@@ -1,33 +1,39 @@
+import { AxiosError, AxiosResponse } from "axios";
 import { AuthModel } from "./_models";
 
 const AUTH_LOCAL_STORAGE_KEY = "access_token";
+export const AUTH_LOCAL_REFRESH_KEY = "refresh_token";
 
-const getAuth = (): string | undefined => {
+const getAuth = (): AuthModel | undefined => {
   if (!localStorage) {
     return;
   }
 
-  const isValue: string | null = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY);
-  if (!isValue) {
+  const accessTokenValue: string | null = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY);
+  const refreshTokenValue: string | null = localStorage.getItem(AUTH_LOCAL_REFRESH_KEY);
+  if (!accessTokenValue || !refreshTokenValue) {
     return;
   }
 
   try {
-    const auth: string = JSON.parse(isValue) as string;
-    if (auth) {
-      return auth;
+    const access_token: string = JSON.parse(accessTokenValue) as string;
+    const refresh_token: string = JSON.parse(refreshTokenValue) as string;
+    if (access_token && refresh_token) {
+      return { accessToken: access_token, refreshToken: refresh_token };
     }
-  } catch (error) {}
+  } catch (error) { }
 };
 
-const setAuth = (apiToken: string) => {
+const setAuth = (accessToken: string, refreshToken: string) => {
   if (!localStorage) {
     return;
   }
 
   try {
-    const lsValue = JSON.stringify(apiToken);
-    localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, lsValue);
+    const accessTokenValue = JSON.stringify(accessToken);
+    const refreshTokenValue = JSON.stringify(refreshToken);
+    localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, accessTokenValue);
+    localStorage.setItem(AUTH_LOCAL_REFRESH_KEY, refreshTokenValue);
   } catch (error) {
     console.error("AUTH LOCAL STORAGE SAVE ERROR", error);
   }
@@ -39,6 +45,7 @@ const removeAuth = () => {
   }
   try {
     localStorage.removeItem(AUTH_LOCAL_STORAGE_KEY);
+    localStorage.removeItem(AUTH_LOCAL_REFRESH_KEY);
   } catch (error) {
     console.error("AUTH LOCAL STORAGE REMOVE ERROR", error);
   }
@@ -55,7 +62,10 @@ const setupAxios = (axios: any) => {
 
       return config;
     },
-    (err: any) => Promise.reject(err)
+    (error: AxiosError) => {
+      const originalRequest = error.config;
+      console.log(originalRequest)
+    }
   );
 };
 
